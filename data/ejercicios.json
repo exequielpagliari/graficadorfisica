@@ -26,5 +26,26 @@
         "Un cañón dispara un proyectil desde el suelo (0 m) con v0 = {v0} m/s y un ángulo de {ang} grados. ¿A qué distancia horizontal impactará contra el suelo?",
         "Si un objeto se lanza con {v0} m/s y un ángulo de {ang} grados, calcule las componentes horizontal (vx) y vertical (vy) iniciales de su velocidad.",
         "Calcule el tiempo que tarda un proyectil en alcanzar su altura máxima si es lanzado a {v0} m/s con un ángulo de {ang} grados."
+    ],
+    "leyes_newton": [
+        "Un cuerpo de {m} kg se encuentra sobre una superficie horizontal. Si se le aplica una fuerza neta de {f} N, calcule la aceleración que adquiere.",
+        "Determine la fuerza necesaria para que un objeto de {m} kg acelere a razón de {a} m/s².",
+        "Un bloque de masa {m} kg es empujado con una fuerza de {f} N sobre una superficie con coeficiente de rozamiento mu = {mu}. Calcule su aceleración neta.",
+        "¿Cuál es la masa de un objeto que adquiere una aceleración de {a} m/s² al aplicársele una fuerza de {f} N?"
+    ],
+    "estatica": [
+        "Un cuerpo se encuentra en equilibrio bajo la acción de tres fuerzas. Si F1 = {f1} N hacia la derecha, determine el valor de la fuerza equilibrante.",
+        "Calcule el peso de un objeto de masa {m} kg en la Tierra (g = 9.8 m/s²)."
+    ],
+    "elasticidad": [
+        "Un resorte con constante elástica k = {k} N/m se estira {x} m. Calcule la fuerza elástica ejercida.",
+        "¿Cuál es la constante elástica de un resorte que se deforma {x} m al aplicarle una fuerza de {f} N?",
+        "Determine cuánto se estira un resorte de k = {k} N/m cuando se cuelga de él una masa de {m} kg."
+    ],
+    "plano_inclinado": [
+        "Un bloque de {m} kg se desliza hacia abajo por un plano inclinado que forma un ángulo de {ang} grados con la horizontal. Si no hay rozamiento, calcule su aceleración.",
+        "Determine la aceleración de un cuerpo de {m} kg que baja por un plano inclinado de {ang} grados con un coeficiente de rozamiento mu = {mu}.",
+        "¿Qué fuerza paralela al plano se debe aplicar a un bloque de {m} kg para que suba con velocidad constante por un plano de {ang} grados (mu = {mu})?",
+        "Un objeto de {m} kg está en reposo sobre un plano inclinado de {ang} grados. Calcule la fuerza de rozamiento estática mínima para que no deslice."
     ]
 }

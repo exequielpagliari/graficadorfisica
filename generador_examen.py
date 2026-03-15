@@ -5,9 +5,10 @@ from graph_tool.physic_calculator import PhysicCalculator
 from graph_tool.class_graph import GraphicGenerator
 from graph_tool.vector_calculator import Vector2D, VectorCalculator
 from graph_tool.projectile_calculator import ProjectileCalculator
+from graph_tool.force_calculator import ForceCalculator
 
 class GeneradorExamen:
-    VERSION = "0.0.3"
+    VERSION = "0.1.0"
 
     def __init__(self):
         # Rutas de archivos y carpetas
@@ -71,167 +72,127 @@ class GeneradorExamen:
         )
         gen_graf.generate(graph_path)
 
-        # 4. Crear bloque LaTeX del ejercicio
-        bloque_ej = self._leer_archivo(self.template_ejercicio)
-        bloque_ej = bloque_ej.replace("{{ NUMERO }}", str(numero))
-        bloque_ej = bloque_ej.replace("{{ ENUNCIADO }}", enunciado)
-        bloque_ej = bloque_ej.replace("{{ RUTA_GRAFICO }}", graph_filename)
-
-        # 5. Crear respuesta
-        res_tex = self._leer_archivo(self.template_respuesta)
-        res_num = f"Posición Final: {calc.posicion_final:.2f} m, Velocidad Final: {calc.velocidad_final:.2f} m/s"
-        res_tex = res_tex.replace("{{ RESULTADO }}", res_num)
-
-        return bloque_ej, res_tex
+        resultado_sugerido = f"Posición Final: {calc.posicion_final:.2f} m, Velocidad Final: {calc.velocidad_final:.2f} m/s"
+        return self._ensamblar_bloque_latex(numero, enunciado, graph_filename, resultado_sugerido)
 
     def generar_ejercicio_vector(self, numero):
-        # 1. Elegir operación aleatoria
         op = random.choice(["suma", "resta", "multiplicacion", "division"])
-        
         v1 = Vector2D(random.randint(-10, 10), random.randint(-10, 10))
         v2 = Vector2D(random.randint(-10, 10), random.randint(-10, 10))
         escalar = random.randint(2, 5)
-        
         calc = VectorCalculator(v1=v1, v2=v2, escalar=escalar, operacion=op)
         res_vector = calc.calcular()
         
-        # 2. Elegir enunciado
-        enunciados = self.ejercicios_pool["vectores"]
-        if op == "suma": enunciado_raw = enunciados[0]
-        elif op == "resta": enunciado_raw = enunciados[1]
-        elif op == "multiplicacion": enunciado_raw = enunciados[2]
-        else: enunciado_raw = enunciados[3]
-        
-        enunciado = enunciado_raw.format(
-            v1=str(v1),
-            v2=str(v2),
-            s=str(escalar),
-            res=str(res_vector)
-        )
-        
-        # 3. Gráfico Vectorial
+        enunciado = random.choice(self.ejercicios_pool["vectores"]).format(v1=str(v1), v2=str(v2), s=str(escalar), res=str(res_vector))
         graph_filename = f"grafico_{numero}.png"
         graph_path = os.path.join(self.output_dir, graph_filename)
         gen_graf = GraphicGenerator()
-        
         if op in ["suma", "resta"]:
             gen_graf.generate_vector_graph([v1, v2, res_vector], ["A", "B", "R"], filename=graph_path)
         else:
             gen_graf.generate_vector_graph([v1, res_vector], ["V", "R"], filename=graph_path)
             
-        # 4. Bloque LaTeX
-        bloque_ej = self._leer_archivo(self.template_ejercicio)
-        bloque_ej = bloque_ej.replace("{{ NUMERO }}", str(numero))
-        bloque_ej = bloque_ej.replace("{{ ENUNCIADO }}", enunciado)
-        bloque_ej = bloque_ej.replace("{{ RUTA_GRAFICO }}", graph_filename)
-        
-        # 5. Respuesta
-        res_tex = self._leer_archivo(self.template_respuesta)
-        res_num = f"Vector R: {res_vector}, Magnitud: {res_vector.magnitud:.2f}, Ángulo: {res_vector.angulo:.2f}°"
-        res_tex = res_tex.replace("{{ RESULTADO }}", res_num)
-        
-        return bloque_ej, res_tex
+        resultado_sugerido = f"Vector R: {res_vector}, Magnitud: {res_vector.magnitud:.2f}, Ángulo: {res_vector.angulo:.2f}°"
+        return self._ensamblar_bloque_latex(numero, enunciado, graph_filename, resultado_sugerido)
 
     def generar_ejercicio_oblicuo(self, numero):
-        # 1. Generar datos aleatorios
-        v0 = random.randint(15, 60)
-        ang = random.choice([15, 30, 45, 60, 75])
-        
+        v0 = random.randint(15, 60); ang = random.choice([15, 30, 45, 60, 75])
         calc = ProjectileCalculator(v0=v0, angulo_deg=ang)
         res = calc.calcular()
-        
-        # 2. Elegir enunciado
-        enunciado_raw = random.choice(self.ejercicios_pool["tiro_oblicuo"])
-        enunciado = enunciado_raw.format(
-            v0=f"{v0:.1f}",
-            ang=f"{ang:.1f}",
-            h0="0.0",
-            range=f"{res['alcance_max']:.2f}",
-            height=f"{res['altura_max']:.2f}",
-            time=f"{res['tiempo_vuelo']:.2f}"
-        )
-        
-        # 3. Gráfico de trayectoria
-        graph_filename = f"grafico_{numero}.png"
-        graph_path = os.path.join(self.output_dir, graph_filename)
+        enunciado = random.choice(self.ejercicios_pool["tiro_oblicuo"]).format(v0=f"{v0:.1f}", ang=f"{ang:.1f}", h0="0.0", range=f"{res['alcance_max']:.2f}", height=f"{res['altura_max']:.2f}", time=f"{res['tiempo_vuelo']:.2f}")
+        graph_filename = f"grafico_{numero}.png"; graph_path = os.path.join(self.output_dir, graph_filename)
         x_pts, y_pts = calc.obtener_trayectoria()
-        gen_graf = GraphicGenerator()
-        gen_graf.generate_projectile_graph(x_pts, y_pts, filename=graph_path)
+        GraphicGenerator().generate_projectile_graph(x_pts, y_pts, filename=graph_path)
+        resultado_sugerido = f"Alcance: {res['alcance_max']:.2f} m, Altura Máx: {res['altura_max']:.2f} m, Tiempo: {res['tiempo_vuelo']:.2f} s"
+        return self._ensamblar_bloque_latex(numero, enunciado, graph_filename, resultado_sugerido)
+
+    def generar_ejercicio_dinamica(self, numero, tipo="newton"):
+        m = random.randint(2, 50); a = random.randint(1, 10); mu = random.choice([0.0, 0.1, 0.2, 0.3])
+        graph_filename = f"grafico_{numero}.png"; graph_path = os.path.join(self.output_dir, graph_filename)
         
-        # 4. Bloque LaTeX
+        if tipo == "newton":
+            calc = ForceCalculator(masa=m, aceleracion=a, mu=mu)
+            res = calc.calcular_newton()
+            enunciado = random.choice(self.ejercicios_pool["leyes_newton"]).format(m=m, f=f"{res['fuerza']:.1f}", a=a, mu=mu)
+            f_vector = [Vector2D(res['fuerza'], 0), Vector2D(0, -m*9.8), Vector2D(0, m*9.8)]
+            labels = ["F aplicada", "Peso", "Normal"]
+            if mu > 0: f_vector.append(Vector2D(-res['rozamiento'], 0)); labels.append("Rozamiento")
+            GraphicGenerator().generate_dcl_graph(f_vector, labels, filename=graph_path)
+            resultado_sugerido = f"Aceleración: {res['aceleracion']:.2f} m/s², Fuerza: {res['fuerza']:.2f} N"
+        
+        elif tipo == "hooke":
+            k = random.randint(100, 1000); x = random.uniform(0.05, 0.5)
+            calc = ForceCalculator(k=k, x=x); res = calc.calcular_hooke()
+            enunciado = self.ejercicios_pool["elasticidad"][0].format(k=k, x=f"{x:.2f}")
+            GraphicGenerator().generate_dcl_graph([Vector2D(0, -res['fuerza']), Vector2D(0, res['fuerza'])], ["Peso", "F Elástica"], filename=graph_path)
+            resultado_sugerido = f"Fuerza Elástica: {res['fuerza']:.2f} N"
+        
+        return self._ensamblar_bloque_latex(numero, enunciado, graph_filename, resultado_sugerido)
+
+    def generar_ejercicio_plano(self, numero):
+        m = random.randint(2, 20); ang = random.choice([15, 30, 45]); mu = random.choice([0.0, 0.1, 0.2])
+        calc = ForceCalculator(masa=m, angulo=ang, mu=mu)
+        res = calc.calcular_plano_inclinado(sentido="descenso")
+        
+        enunciado = self.ejercicios_pool["plano_inclinado"][1].format(m=m, ang=ang, mu=mu)
+        graph_filename = f"grafico_{numero}.png"; graph_path = os.path.join(self.output_dir, graph_filename)
+        
+        # Fuerzas en el plano (Ejes rotados para el DCL)
+        f_vector = [Vector2D(res['peso_x'], -res['peso_y']), Vector2D(0, res['normal']), Vector2D(-res['rozamiento'], 0)]
+        labels = ["Peso", "Normal", "Rozamiento"]
+        GraphicGenerator().generate_inclined_plane_graph(ang, f_vector, labels, filename=graph_path)
+        
+        resultado_sugerido = f"Aceleración: {res['aceleracion']:.2f} m/s², Px: {res['peso_x']:.1f} N, Py: {res['peso_y']:.1f} N"
+        return self._ensamblar_bloque_latex(numero, enunciado, graph_filename, resultado_sugerido)
+
+    def _ensamblar_bloque_latex(self, numero, enunciado, graph_filename, resultado_sugerido):
         bloque_ej = self._leer_archivo(self.template_ejercicio)
-        bloque_ej = bloque_ej.replace("{{ NUMERO }}", str(numero))
-        bloque_ej = bloque_ej.replace("{{ ENUNCIADO }}", enunciado)
-        bloque_ej = bloque_ej.replace("{{ RUTA_GRAFICO }}", graph_filename)
-        
-        # 5. Respuesta
-        res_tex = self._leer_archivo(self.template_respuesta)
-        res_num = f"Alcance: {res['alcance_max']:.2f} m, Altura Máx: {res['altura_max']:.2f} m, Tiempo: {res['tiempo_vuelo']:.2f} s"
-        res_tex = res_tex.replace("{{ RESULTADO }}", res_num)
-        
+        bloque_ej = bloque_ej.replace("{{ NUMERO }}", str(numero)).replace("{{ ENUNCIADO }}", enunciado).replace("{{ RUTA_GRAFICO }}", graph_filename).replace("{{ RESULTADO_REFERENCIA }}", resultado_sugerido)
+        res_tex = self._leer_archivo(self.template_respuesta).replace("{{ RESULTADO }}", resultado_sugerido)
         return bloque_ej, res_tex
 
-    def crear_examen(self, cant_mru=0, cant_mrua=0, cant_vectores=0, cant_oblicuo=0, filename="examen_generado.tex"):
-        print(f"Generando examen: MRU={cant_mru}, MRUA={cant_mrua}, Vectores={cant_vectores}, Oblicuo={cant_oblicuo}")
+    def crear_examen(self, mru=0, mrua=0, vectores=0, oblicuo=0, newton=0, hooke=0, plano=0, filename="examen_generado.tex"):
+        print(f"Generando examen v{self.VERSION}...")
+        ejercicios_tex = []; respuestas_tex = []; n = 1
         
-        ejercicios_tex = []
-        respuestas_tex = []
-        n = 1
+        for cant, tipo in [(mru, "mru"), (mrua, "mrua")]:
+            for _ in range(cant):
+                ej, res = self.generar_ejercicio_fisica(n, tipo=tipo)
+                ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
         
-        # Generar MRU
-        for _ in range(cant_mru):
-            ej, res = self.generar_ejercicio_fisica(n, tipo="mru")
-            ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
-            
-        # Generar MRUA
-        for _ in range(cant_mrua):
-            ej, res = self.generar_ejercicio_fisica(n, tipo="mrua")
-            ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
-            
-        # Generar Vectores
-        for _ in range(cant_vectores):
+        for _ in range(vectores):
             ej, res = self.generar_ejercicio_vector(n)
             ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
             
-        # Generar Tiro Oblicuo
-        for _ in range(cant_oblicuo):
+        for _ in range(oblicuo):
             ej, res = self.generar_ejercicio_oblicuo(n)
             ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
+            
+        for _ in range(newton):
+            ej, res = self.generar_ejercicio_dinamica(n, tipo="newton")
+            ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
 
-        # Montar en la base
-        base = self._leer_archivo(self.template_base)
-        base = base.replace("{{ CONTENIDO_EJERCICIOS }}", "\n".join(ejercicios_tex))
-        base = base.replace("{{ CLAVE_RESPUESTAS }}", "\n".join(respuestas_tex))
+        for _ in range(hooke):
+            ej, res = self.generar_ejercicio_dinamica(n, tipo="hooke")
+            ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
+            
+        for _ in range(plano):
+            ej, res = self.generar_ejercicio_plano(n)
+            ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
 
-        output_path = os.path.join(self.output_dir, filename)
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(base)
-        
-        print(f"Examen v{self.VERSION} generado exitosamente en: {output_path}")
+        base = self._leer_archivo(self.template_base).replace("{{ CONTENIDO_EJERCICIOS }}", "\n".join(ejercicios_tex)).replace("{{ CLAVE_RESPUESTAS }}", "\n".join(respuestas_tex))
+        with open(os.path.join(self.output_dir, filename), 'w', encoding='utf-8') as f: f.write(base)
+        print(f"Examen generado en: {filename}")
 
 if __name__ == "__main__":
     import argparse
-    
-    parser = argparse.ArgumentParser(description="Generador automático de exámenes de Física v0.0.3")
-    parser.add_argument("--mru", type=int, default=0, help="Número de ejercicios de MRU")
-    parser.add_argument("--mrua", type=int, default=0, help="Número de ejercicios de MRUA")
-    parser.add_argument("--vectores", type=int, default=0, help="Número de ejercicios de Vectores")
-    parser.add_argument("--oblicuo", type=int, default=0, help="Número de ejercicios de Tiro Oblicuo")
-    parser.add_argument("--out", type=str, default="examen_generado.tex", help="Nombre del archivo de salida")
-    parser.add_argument("--version", action="version", version=f"%(prog)s {GeneradorExamen.VERSION}")
-    
+    parser = argparse.ArgumentParser(description="Generador automático de exámenes de Física v0.0.6")
+    parser.add_argument("--mru", type=int, default=0); parser.add_argument("--mrua", type=int, default=0)
+    parser.add_argument("--vectores", type=int, default=0); parser.add_argument("--oblicuo", type=int, default=0)
+    parser.add_argument("--newton", type=int, default=0); parser.add_argument("--hooke", type=int, default=0)
+    parser.add_argument("--plano", type=int, default=0)
+    parser.add_argument("--out", type=str, default="examen_generado.tex")
     args = parser.parse_args()
-
-    # Si no se especifica nada, generar 1 de cada uno por defecto
-    if args.mru == 0 and args.mrua == 0 and args.vectores == 0 and args.oblicuo == 0:
-        args.mru, args.mrua, args.vectores, args.oblicuo = 1, 1, 1, 1
-
-    try:
-        generador = GeneradorExamen()
-        generador.crear_examen(cant_mru=args.mru, cant_mrua=args.mrua, 
-                               cant_vectores=args.vectores, cant_oblicuo=args.oblicuo, 
-                               filename=args.out)
-    except Exception as e:
-        print(f"Error al generar el examen: {e}")
-        import traceback
-        traceback.print_exc()
+    if all(v == 0 for v in [args.mru, args.mrua, args.vectores, args.oblicuo, args.newton, args.hooke, args.plano]):
+        args.mru, args.mrua, args.newton, args.hooke, args.plano = 1, 1, 1, 1, 1
+    GeneradorExamen().crear_examen(mru=args.mru, mrua=args.mrua, vectores=args.vectores, oblicuo=args.oblicuo, newton=args.newton, hooke=args.hooke, plano=args.plano, filename=args.out)
