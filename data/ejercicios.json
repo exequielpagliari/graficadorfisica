@@ -1,0 +1,16 @@
+{
+    "mru": [
+        "Un móvil se desplaza con velocidad constante de {v} m/s partiendo desde la posición {pi} m. Determine su posición final tras {t} segundos de recorrido.",
+        "Calcule el tiempo necesario para que un cuerpo recorra la distancia desde {pi} m hasta {pf} m moviéndose a una velocidad constante de {v} m/s.",
+        "Un ciclista mantiene un ritmo constante de {v} m/s durante {t} segundos. Si comenzó en el origen de coordenadas (0 m), ¿en qué punto se encuentra ahora?",
+        "Una partícula viaja a {v} m/s. Si su posición final es {pf} m tras {t} segundos, calcule su posición inicial.",
+        "Determine la velocidad constante de un objeto que recorre desde {pi} m hasta {pf} m en un intervalo de {t} segundos."
+    ],
+    "mrua": [
+        "Un automóvil parte del reposo (0 m/s) y acelera a razón de {a} m/s² durante {t} segundos. Determine la distancia recorrida y su velocidad final.",
+        "Un proyectil es disparado con una velocidad inicial de {vi} m/s y una aceleración constante de {a} m/s². Calcule su posición final a los {t} segundos.",
+        "Un tren que viaja a {vi} m/s aplica los frenos con una desaceleración de {a} m/s² hasta detenerse por completo (0 m/s). ¿Qué distancia recorre antes de frenar?",
+        "Un objeto inicia su movimiento a {vi} m/s y alcanza una velocidad de {vf} m/s en {t} segundos. Calcule su aceleración y la distancia total recorrida.",
+        "Determine el tiempo que le toma a un móvil alcanzar los {pf} m partiendo desde el reposo con una aceleración constante de {a} m/s²."
+    ]
+}
