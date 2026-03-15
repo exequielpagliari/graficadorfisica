@@ -12,5 +12,19 @@
         "Un tren que viaja a {vi} m/s aplica los frenos con una desaceleración de {a} m/s² hasta detenerse por completo (0 m/s). ¿Qué distancia recorre antes de frenar?",
         "Un objeto inicia su movimiento a {vi} m/s y alcanza una velocidad de {vf} m/s en {t} segundos. Calcule su aceleración y la distancia total recorrida.",
         "Determine el tiempo que le toma a un móvil alcanzar los {pf} m partiendo desde el reposo con una aceleración constante de {a} m/s²."
+    ],
+    "vectores": [
+        "Dados los vectores A = {v1} y B = {v2}, calcule el vector resultante R = A + B, su magnitud y su ángulo.",
+        "Encuentre la diferencia entre los vectores A = {v1} y B = {v2} (R = A - B). Grafique ambos vectores y el resultante.",
+        "Dado el vector V = {v1}, calcule el vector resultante R = {s} * V (multiplicación por escalar).",
+        "Si el vector A = {v1} se divide por el escalar {s}, ¿cuál es el vector resultante R? Calcule su magnitud.",
+        "Un vector A tiene componentes {v1}. Si se le suma el vector B = {v2}, determine la dirección (ángulo) del vector resultante."
+    ],
+    "tiro_oblicuo": [
+        "Un proyectil es disparado con una velocidad de {v0} m/s y un ángulo de {ang} grados. Calcule el alcance máximo y el tiempo total de vuelo.",
+        "Determine la altura máxima alcanzada por un objeto lanzado a {v0} m/s con una inclinación de {ang} grados respecto a la horizontal.",
+        "Un cañón dispara un proyectil desde el suelo (0 m) con v0 = {v0} m/s y un ángulo de {ang} grados. ¿A qué distancia horizontal impactará contra el suelo?",
+        "Si un objeto se lanza con {v0} m/s y un ángulo de {ang} grados, calcule las componentes horizontal (vx) y vertical (vy) iniciales de su velocidad.",
+        "Calcule el tiempo que tarda un proyectil en alcanzar su altura máxima si es lanzado a {v0} m/s con un ángulo de {ang} grados."
     ]
 }

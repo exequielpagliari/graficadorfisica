@@ -77,3 +77,66 @@ class GraphicGenerator:
 
         plt.savefig(filename, dpi=300)
         plt.close(fig)
+
+    def generate_vector_graph(self, vectores, labels, titulo="Gráfico de Vectores", filename="grafico_vector.png"):
+        """
+        Dibuja una lista de vectores (objetos Vector2D) como flechas desde el origen.
+        'vectores' es una lista de objetos Vector2D.
+        'labels' es una lista de strings para la leyenda.
+        """
+        fig, ax = plt.subplots(figsize=(6, 6))
+        
+        # Encontrar límites para el gráfico
+        max_val = 1.0
+        for v in vectores:
+            max_val = max(max_val, abs(v.x), abs(v.y))
+        
+        limit = max_val * 1.2
+        
+        colores = ['blue', 'green', 'red', 'purple', 'orange']
+        
+        for i, v in enumerate(vectores):
+            color = colores[i % len(colores)]
+            ax.quiver(0, 0, v.x, v.y, angles='xy', scale_units='xy', scale=1, 
+                      color=color, label=labels[i])
+        
+        ax.set_xlim(-limit, limit)
+        ax.set_ylim(-limit, limit)
+        ax.axhline(0, color='black', linewidth=1)
+        ax.axvline(0, color='black', linewidth=1)
+        ax.grid(True, linestyle='--', alpha=0.6)
+        ax.set_aspect('equal')
+        ax.set_title(titulo)
+        ax.legend()
+        
+        print(f"Guardando gráfico vectorial en {filename}...")
+        plt.savefig(filename, dpi=300)
+        plt.close(fig)
+
+    def generate_projectile_graph(self, x, y, titulo="Trayectoria de Proyectil", filename="grafico_proyectil.png"):
+        """
+        Dibuja la trayectoria de un proyectil (Y vs X).
+        'x' y 'y' son listas de coordenadas para la parábola.
+        """
+        fig, ax = plt.subplots(figsize=(8, 4), layout='constrained')
+        ax.plot(x, y, label='Trayectoria', color='darkorange', linewidth=2.5)
+        
+        # Sombrear el área bajo la trayectoria
+        ax.fill_between(x, y, color='orange', alpha=0.2)
+        
+        # Puntos clave
+        ax.scatter([x[0], x[-1]], [y[0], y[-1]], color='red', s=50, label='Inicio/Impacto')
+        
+        ax.set_xlabel('Distancia Horizontal [m]')
+        ax.set_ylabel('Altura [m]')
+        ax.set_title(titulo)
+        ax.grid(True, linestyle='--', alpha=0.6)
+        ax.legend()
+        
+        # Asegurar que el suelo se vea en y=0
+        if min(y) >= 0:
+            ax.set_ylim(bottom=0)
+        
+        print(f"Guardando gráfico de trayectoria en {filename}...")
+        plt.savefig(filename, dpi=300)
+        plt.close(fig)
