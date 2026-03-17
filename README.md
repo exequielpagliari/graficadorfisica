@@ -1,6 +1,12 @@
-# Asistente IA - Física Interactiva v0.1.1 🚀
+# Asistente IA - Física Interactiva v0.2.0 🚀
 
 **Herramienta educativa integral para docentes de física.** Este proyecto automatiza la creación de guías y exámenes personalizados para el nivel secundario (6to año - PBA Argentina), vinculando motores de cálculo físico con generación de gráficos dinámicos y plantillas profesionales en LaTeX.
+
+## 🐛 Cambios en v0.2.0
+
+- **Manejo de errores unificado**: Nueva excepción `CalculationError` para todos los calculators
+- **Error handling consistente**: Todos los calculators ahora lanzan excepciones en lugar de retornar `None` o crashear
+- **Logging estructurado**: Sistema de logging integrado para mejor debugging
 
 ## 🌐 Acceso Web (PyScript)
 ¡Usa la aplicación directamente desde tu navegador sin instalar nada!
@@ -8,7 +14,7 @@
 
 ## 🚀 Características Principales
 - **Generación Multimodelo**: Crea exámenes únicos con datos aleatorios pero físicamente coherentes.
-- **Cobertura Curricular (v0.1.1)**:
+- **Cobertura Curricular (v0.2.0)**:
     - **Cinemática**: MRU, MRUA y Tiro Oblicuo.
     - **Vectores**: Operaciones 2D, magnitudes y ángulos.
     - **Dinámica**: Leyes de Newton, Rozamiento, Ley de Hooke y Planos Inclinados (DCL).
