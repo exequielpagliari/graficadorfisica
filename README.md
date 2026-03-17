@@ -4,7 +4,7 @@ Herramienta educativa integral para docentes de física. Genera guías de ejerci
 
 ## 🌐 Acceso Web (GitHub Pages)
 ¡Ahora puedes usar la aplicación directamente desde tu navegador!
-**[Link a la Web App](https://exequielpagliari.github.io/asistente_ia/)** *(Reemplaza con tu URL real)*
+**[Link a la Web App](https://exequielpagliari.github.io/graficadorfisica/)** *(Reemplaza con tu URL real)*
 
 ## 🚀 Características
 - **Multientorno**: Úsalo desde la terminal (CLI) o como aplicación web (PyScript).
