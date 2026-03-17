@@ -1,6 +1,7 @@
 {
     "packages": ["numpy", "matplotlib"],
     "files": {
+        "graph_tool/exceptions.py": "graph_tool/exceptions.py",
         "graph_tool/physic_calculator.py": "graph_tool/physic_calculator.py",
         "graph_tool/vector_calculator.py": "graph_tool/vector_calculator.py",
         "graph_tool/projectile_calculator.py": "graph_tool/projectile_calculator.py",
