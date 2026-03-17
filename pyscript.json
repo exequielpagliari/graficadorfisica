@@ -5,6 +5,7 @@
         "graph_tool/vector_calculator.py": "graph_tool/vector_calculator.py",
         "graph_tool/projectile_calculator.py": "graph_tool/projectile_calculator.py",
         "graph_tool/force_calculator.py": "graph_tool/force_calculator.py",
+        "graph_tool/energy_calculator.py": "graph_tool/energy_calculator.py",
         "graph_tool/class_graph.py": "graph_tool/class_graph.py",
         "data/ejercicios.json": "data/ejercicios.json",
         "templates/examen_base.tex": "templates/examen_base.tex",

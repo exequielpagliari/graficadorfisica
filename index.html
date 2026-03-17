@@ -12,15 +12,21 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
         .input-group { display: flex; flex-direction: column; }
         input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
         button { padding: 12px; background: #0084ff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         button:hover { background: #0073e6; }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #5a6268; }
         #output-tex { width: 100%; height: 200px; font-family: monospace; margin-top: 10px; }
         .graph-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        .graph-container img { max-width: 100%; border: 1px solid #ddd; }
+        .graph-container img { max-width: 100%; border: 1px solid #ddd; border-radius: 4px; }
+        .ejercicio-preview { background: #f9f9f9; border-left: 4px solid #0084ff; padding: 10px; margin-bottom: 10px; border-radius: 0 4px 4px 0; }
+        .preview-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .preview-columns { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <h1>Generador de Exámenes de Física v0.1.0</h1>
+    <h1>Generador de Exámenes de Física v0.1.1</h1>
     
     <div class="card">
         <h3>Configuración del Examen</h3>
@@ -31,21 +37,35 @@
             <div class="input-group"><label>Oblicuo</label><input type="number" id="oblicuo" value="1"></div>
             <div class="input-group"><label>Newton</label><input type="number" id="newton" value="1"></div>
             <div class="input-group"><label>Plano</label><input type="number" id="plano" value="1"></div>
+            <div class="input-group"><label>Energía</label><input type="number" id="energia" value="1"></div>
         </div>
-        <br>
-        <button id="btn-generate" py-click="main_web">Generar Examen y Gráficos</button>
+        <div class="btn-container">
+            <button id="btn-generate" py-click="main_web">Generar Examen y Gráficos</button>
+        </div>
     </div>
 
     <div id="status"></div>
 
     <div class="card" id="result-card" style="display:none;">
+        <h3>Resultado de la Generación</h3>
+        
+        <div class="preview-columns">
+            <div>
+                <h4>Vista Previa de Enunciados</h4>
+                <div id="text-preview"></div>
+            </div>
+            <div>
+                <h4>Vista Previa de Gráficos</h4>
+                <div id="graph-preview" class="graph-container"></div>
+            </div>
+        </div>
+
+        <hr>
         <h3>Código LaTeX Generado</h3>
+        <p><small>💡 <strong>Tip:</strong> Descarga el archivo <code>.tex</code> y súbelo a <a href="https://www.overleaf.com" target="_blank">Overleaf.com</a> para generar un PDF profesional con los gráficos incluidos.</small></p>
         <button id="btn-download" py-click="download_tex">Descargar archivo .tex</button>
         <textarea id="output-tex" readonly></textarea>
     </div>
-
-    <h3>Vista Previa de Gráficos</h3>
-    <div id="graph-preview" class="graph-container"></div>
 
     <script type="py" src="./web_app.py" config="./pyscript.json"></script>
 </body>

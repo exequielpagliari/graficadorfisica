@@ -9,9 +9,10 @@ from graph_tool.class_graph import GraphicGenerator
 from graph_tool.vector_calculator import Vector2D, VectorCalculator
 from graph_tool.projectile_calculator import ProjectileCalculator
 from graph_tool.force_calculator import ForceCalculator
+from graph_tool.energy_calculator import EnergyCalculator
 
 class WebOrchestrator:
-    VERSION = "0.1.0"
+    VERSION = "0.1.1"
     def __init__(self):
         with open("data/ejercicios.json", "r", encoding="utf-8") as f:
             self.pool = json.load(f)
@@ -21,6 +22,7 @@ class WebOrchestrator:
             "respuesta": open("templates/respuesta_fragmento.tex", encoding="utf-8").read()
         }
         self.final_tex = ""
+        self.preview_text = ""
 
     def fig_to_base64(self, fig):
         buf = BytesIO()
@@ -34,8 +36,10 @@ class WebOrchestrator:
     def generar_y_mostrar(self, counts):
         ejercicios_tex = []
         respuestas_tex = []
+        preview_items = []
         n = 1
         document.getElementById("graph-preview").innerHTML = ""
+        document.getElementById("text-preview").innerHTML = ""
         
         # Diccionario de mapeo de funciones
         mapping = [
@@ -44,21 +48,31 @@ class WebOrchestrator:
             (counts['vectores'], "vectores"),
             (counts['oblicuo'], "oblicuo"),
             (counts['newton'], "newton"),
-            (counts['plano'], "plano")
+            (counts['plano'], "plano"),
+            (counts['energia'], "energia")
         ]
 
         for cant, tipo in mapping:
             for _ in range(cant):
-                bloque, res, fig = self.resolver_ejercicio(n, tipo)
+                bloque, res, fig, enunciado_limpio = self.resolver_ejercicio(n, tipo)
                 ejercicios_tex.append(bloque)
                 respuestas_tex.append(res)
                 
-                # Renderizar en la web
+                # Renderizar Texto en la web
+                div_ej = document.createElement("div")
+                div_ej.className = "ejercicio-preview"
+                div_ej.innerHTML = f"<strong>Ejercicio {n}:</strong> {enunciado_limpio}<br><small style='color:green'>Rta: {res.replace('{{ RESULTADO }}', '')}</small>"
+                document.getElementById("text-preview").appendChild(div_ej)
+
+                # Renderizar Gráfico en la web
+                div_img = document.createElement("div")
+                div_img.style.textAlign = "center"
                 img = document.createElement("img")
                 img.src = f"data:image/png;base64,{self.fig_to_base64(fig)}"
                 img.style.margin = "10px"
-                img.title = f"Ejercicio {n}"
-                document.getElementById("graph-preview").appendChild(img)
+                img.title = f"Gráfico Ejercicio {n}"
+                div_img.appendChild(img)
+                document.getElementById("graph-preview").appendChild(div_img)
                 n += 1
 
         self.final_tex = self.templates["base"].replace("{{ CONTENIDO_EJERCICIOS }}", "\n".join(ejercicios_tex))
@@ -135,11 +149,30 @@ class WebOrchestrator:
             fig = gen_graf.generate_inclined_plane_graph(ang, f_v, ["Peso", "Normal", "Rozamiento"], save=False)
             resultado = f"Aceleración: {res['aceleracion']:.2f} m/s², Px: {res['peso_x']:.1f} N, Py: {res['peso_y']:.1f} N"
 
+        elif tipo == "energia":
+            tipo_sub = random.choice(["cinetica", "potencial", "elastica"])
+            m, v, h = random.randint(1, 10), random.randint(2, 20), random.randint(5, 50)
+            k, x = random.randint(100, 500), random.uniform(0.1, 0.5)
+            calc = EnergyCalculator(masa=m, velocidad=v, altura=h, k=k, x=x)
+            if tipo_sub == "cinetica":
+                res = calc.calcular_cinetica()
+                enunciado = self.pool["energia"][0].format(m=m, v=v)
+                resultado = f"Energía Cinética: {res:.2f} J"
+            elif tipo_sub == "potencial":
+                res = calc.calcular_potencial_gravitatoria()
+                enunciado = self.pool["energia"][1].format(m=m, h=h)
+                resultado = f"Energía Potencial: {res:.2f} J"
+            else:
+                res = calc.calcular_potencial_elastica()
+                enunciado = self.pool["energia"][2].format(k=k, x=f"{x:.2f}")
+                resultado = f"Energía Elástica: {res:.2f} J"
+            fig = gen_graf.generate_dcl_graph([Vector2D(0, -9.8*m)], ["Peso"], save=False)
+
         # Ensamblar bloque LaTeX
         bloque = self.templates["ejercicio"].replace("{{ NUMERO }}", str(n)).replace("{{ ENUNCIADO }}", enunciado).replace("{{ RUTA_GRAFICO }}", f"grafico_{n}.png").replace("{{ RESULTADO_REFERENCIA }}", resultado)
         res_tex = self.templates["respuesta"].replace("{{ RESULTADO }}", resultado)
         
-        return bloque, res_tex, fig
+        return bloque, res_tex, fig, enunciado
 
 orchestrator = WebOrchestrator()
 
@@ -154,6 +187,7 @@ def main_web(event):
         "oblicuo": int(document.getElementById("oblicuo").value),
         "newton": int(document.getElementById("newton").value),
         "plano": int(document.getElementById("plano").value),
+        "energia": int(document.getElementById("energia").value),
     }
     
     try:
@@ -171,3 +205,9 @@ def download_tex(event):
     link.download = "examen_fisica.tex"
     link.click()
     window.URL.revokeObjectURL(url)
+
+def download_docx(event):
+    window.alert("La conversión directa a DOCX requiere un servidor con Pandoc o una librería pesada no disponible en el navegador.\n\nSugerencia: Descargue el archivo .tex y súbalo a Overleaf o use un convertidor online como CloudConvert.")
+
+def download_pdf(event):
+    window.alert("La generación de PDF desde LaTeX requiere una distribución TeX completa (como TeXLive) que no puede ejecutarse dentro del navegador.\n\nSugerencia: Use Overleaf.com para compilar el archivo .tex descargado y obtener su PDF profesional.")
