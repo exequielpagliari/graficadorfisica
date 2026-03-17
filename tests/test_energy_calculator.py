@@ -1,5 +1,6 @@
 import unittest
 from graph_tool.energy_calculator import EnergyCalculator
+from graph_tool.exceptions import CalculationError
 
 class TestEnergyCalculator(unittest.TestCase):
     def setUp(self):
@@ -31,6 +32,56 @@ class TestEnergyCalculator(unittest.TestCase):
         calc = EnergyCalculator(masa=2.0)
         calc.resolver_variable("gravitatoria", 98.0)
         self.assertAlmostEqual(calc.h, 5.0)
+
+    def test_energy_missing_masa_raises_calculation_error(self):
+        """Test that missing masa raises CalculationError in calcular_cinetica."""
+        calc = EnergyCalculator(masa=None, velocidad=10.0)
+        
+        with self.assertRaises(CalculationError) as context:
+            calc.calcular_cinetica()
+        
+        self.assertIn("masa", str(context.exception).lower())
+        self.assertEqual(context.exception.operation, "calcular_cinetica")
+
+    def test_energy_missing_velocidad_raises_calculation_error(self):
+        """Test that missing velocidad raises CalculationError in calcular_cinetica."""
+        calc = EnergyCalculator(masa=5.0, velocidad=None)
+        
+        with self.assertRaises(CalculationError) as context:
+            calc.calcular_cinetica()
+        
+        self.assertIn("velocidad", str(context.exception).lower())
+        self.assertEqual(context.exception.operation, "calcular_cinetica")
+
+    def test_energy_missing_altura_raises_calculation_error(self):
+        """Test that missing altura raises CalculationError in calcular_potencial_gravitatoria."""
+        calc = EnergyCalculator(masa=5.0, altura=None)
+        
+        with self.assertRaises(CalculationError) as context:
+            calc.calcular_potencial_gravitatoria()
+        
+        self.assertIn("altura", str(context.exception).lower())
+        self.assertEqual(context.exception.operation, "calcular_potencial_gravitatoria")
+
+    def test_energy_missing_k_raises_calculation_error(self):
+        """Test that missing k raises CalculationError in calcular_potencial_elastica."""
+        calc = EnergyCalculator(k=None, x=0.5)
+        
+        with self.assertRaises(CalculationError) as context:
+            calc.calcular_potencial_elastica()
+        
+        self.assertIn("k", str(context.exception).lower())
+        self.assertEqual(context.exception.operation, "calcular_potencial_elastica")
+
+    def test_energy_missing_x_raises_calculation_error(self):
+        """Test that missing x raises CalculationError in calcular_potencial_elastica."""
+        calc = EnergyCalculator(k=100.0, x=None)
+        
+        with self.assertRaises(CalculationError) as context:
+            calc.calcular_potencial_elastica()
+        
+        self.assertIn("x", str(context.exception).lower())
+        self.assertEqual(context.exception.operation, "calcular_potencial_elastica")
 
 if __name__ == "__main__":
     unittest.main()
