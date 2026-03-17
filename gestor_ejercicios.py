@@ -9,7 +9,11 @@ class GestorEjercicios:
 
     def _cargar_data(self):
         if not os.path.exists(self.ruta_json):
-            return {"mru": [], "mrua": [], "vectores": [], "tiro_oblicuo": []}
+            return {
+                "mru": [], "mrua": [], "vectores": [], "tiro_oblicuo": [],
+                "leyes_newton": [], "estatica": [], "elasticidad": [],
+                "plano_inclinado": [], "energia": []
+            }
         with open(self.ruta_json, "r", encoding="utf-8") as f:
             return json.load(f)
 
@@ -19,7 +23,7 @@ class GestorEjercicios:
         print(f"✅ Cambios guardados en {self.ruta_json}")
 
     def listar(self, tipo=None):
-        tipos = [tipo] if tipo else ["mru", "mrua", "vectores", "tiro_oblicuo"]
+        tipos = [tipo] if tipo else ["mru", "mrua", "vectores", "tiro_oblicuo", "leyes_newton", "estatica", "elasticidad", "plano_inclinado", "energia"]
         for t in tipos:
             if t in self.data:
                 print(f"\n--- Ejercicios de {t.upper()} ---")
@@ -55,12 +59,12 @@ if __name__ == "__main__":
 
     # Comando Agregar
     parser_add = subparsers.add_parser("agregar", help="Agrega un nuevo ejercicio")
-    parser_add.add_argument("--tipo", choices=["mru", "mrua", "vectores", "tiro_oblicuo"], required=True, help="Tipo de ejercicio")
+    parser_add.add_argument("--tipo", choices=["mru", "mrua", "vectores", "tiro_oblicuo", "leyes_newton", "estatica", "elasticidad", "plano_inclinado", "energia"], required=True, help="Tipo de ejercicio")
     parser_add.add_argument("--texto", required=True, help="Texto del enunciado")
 
     # Comando Borrar
     parser_del = subparsers.add_parser("borrar", help="Elimina un ejercicio por su índice")
-    parser_del.add_argument("--tipo", choices=["mru", "mrua", "vectores", "tiro_oblicuo"], required=True, help="Tipo de ejercicio")
+    parser_del.add_argument("--tipo", choices=["mru", "mrua", "vectores", "tiro_oblicuo", "leyes_newton", "estatica", "elasticidad", "plano_inclinado", "energia"], required=True, help="Tipo de ejercicio")
     parser_del.add_argument("--indice", type=int, required=True, help="Índice del ejercicio a borrar")
 
     args = parser.parse_args()

@@ -47,5 +47,12 @@
         "Determine la aceleración de un cuerpo de {m} kg que baja por un plano inclinado de {ang} grados con un coeficiente de rozamiento mu = {mu}.",
         "¿Qué fuerza paralela al plano se debe aplicar a un bloque de {m} kg para que suba con velocidad constante por un plano de {ang} grados (mu = {mu})?",
         "Un objeto de {m} kg está en reposo sobre un plano inclinado de {ang} grados. Calcule la fuerza de rozamiento estática mínima para que no deslice."
+    ],
+    "energia": [
+        "Calcule la energía cinética de un cuerpo de {m} kg que se desplaza a una velocidad constante de {v} m/s.",
+        "Determine la energía potencial gravitatoria de un objeto de {m} kg situado a una altura de {h} metros sobre el suelo.",
+        "Un resorte con constante k = {k} N/m se comprime una distancia de {x} m. ¿Cuánta energía potencial elástica almacena?",
+        "Un objeto de {m} kg cae desde una altura de {h} m. Calcule su velocidad justo antes de tocar el suelo usando la conservación de la energía mecánica.",
+        "Determine el trabajo realizado por una fuerza que desplaza un bloque de {m} kg una distancia de {d} m con una aceleración de {a} m/s²."
     ]
 }

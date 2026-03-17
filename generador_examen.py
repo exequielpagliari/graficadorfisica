@@ -6,9 +6,10 @@ from graph_tool.class_graph import GraphicGenerator
 from graph_tool.vector_calculator import Vector2D, VectorCalculator
 from graph_tool.projectile_calculator import ProjectileCalculator
 from graph_tool.force_calculator import ForceCalculator
+from graph_tool.energy_calculator import EnergyCalculator
 
 class GeneradorExamen:
-    VERSION = "0.1.0"
+    VERSION = "0.1.1"
 
     def __init__(self):
         # Rutas de archivos y carpetas
@@ -145,13 +146,44 @@ class GeneradorExamen:
         resultado_sugerido = f"Aceleración: {res['aceleracion']:.2f} m/s², Px: {res['peso_x']:.1f} N, Py: {res['peso_y']:.1f} N"
         return self._ensamblar_bloque_latex(numero, enunciado, graph_filename, resultado_sugerido)
 
+    def generar_ejercicio_energia(self, numero):
+        tipo_sub = random.choice(["cinetica", "potencial", "elastica", "trabajo"])
+        m = random.randint(1, 10); v = random.randint(2, 20); h = random.randint(5, 50)
+        k = random.randint(100, 500); x = random.uniform(0.1, 0.5); d = random.randint(5, 30)
+        
+        calc = EnergyCalculator(masa=m, velocidad=v, altura=h, k=k, x=x)
+        graph_filename = f"grafico_{numero}.png"; graph_path = os.path.join(self.output_dir, graph_filename)
+        
+        if tipo_sub == "cinetica":
+            res = calc.calcular_cinetica()
+            enunciado = self.ejercicios_pool["energia"][0].format(m=m, v=v)
+            resultado_sugerido = f"Energía Cinética: {res:.2f} J"
+        elif tipo_sub == "potencial":
+            res = calc.calcular_potencial_gravitatoria()
+            enunciado = self.ejercicios_pool["energia"][1].format(m=m, h=h)
+            resultado_sugerido = f"Energía Potencial: {res:.2f} J"
+        elif tipo_sub == "elastica":
+            res = calc.calcular_potencial_elastica()
+            enunciado = self.ejercicios_pool["energia"][2].format(k=k, x=f"{x:.2f}")
+            resultado_sugerido = f"Energía Elástica: {res:.2f} J"
+        else: # trabajo
+            f = m * 2 # Fuerza arbitraria
+            res = f * d
+            enunciado = self.ejercicios_pool["energia"][4].format(m=m, d=d, a=2)
+            resultado_sugerido = f"Trabajo: {res:.2f} J"
+
+        # Gráfico genérico para energía (puedes expandirlo luego)
+        GraphicGenerator().generate_dcl_graph([Vector2D(0, -9.8*m)], ["Peso"], filename=graph_path)
+        
+        return self._ensamblar_bloque_latex(numero, enunciado, graph_filename, resultado_sugerido)
+
     def _ensamblar_bloque_latex(self, numero, enunciado, graph_filename, resultado_sugerido):
         bloque_ej = self._leer_archivo(self.template_ejercicio)
         bloque_ej = bloque_ej.replace("{{ NUMERO }}", str(numero)).replace("{{ ENUNCIADO }}", enunciado).replace("{{ RUTA_GRAFICO }}", graph_filename).replace("{{ RESULTADO_REFERENCIA }}", resultado_sugerido)
         res_tex = self._leer_archivo(self.template_respuesta).replace("{{ RESULTADO }}", resultado_sugerido)
         return bloque_ej, res_tex
 
-    def crear_examen(self, mru=0, mrua=0, vectores=0, oblicuo=0, newton=0, hooke=0, plano=0, filename="examen_generado.tex"):
+    def crear_examen(self, mru=0, mrua=0, vectores=0, oblicuo=0, newton=0, hooke=0, plano=0, energia=0, filename="examen_generado.tex"):
         print(f"Generando examen v{self.VERSION}...")
         ejercicios_tex = []; respuestas_tex = []; n = 1
         
@@ -180,19 +212,23 @@ class GeneradorExamen:
             ej, res = self.generar_ejercicio_plano(n)
             ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
 
+        for _ in range(energia):
+            ej, res = self.generar_ejercicio_energia(n)
+            ejercicios_tex.append(ej); respuestas_tex.append(res); n += 1
+
         base = self._leer_archivo(self.template_base).replace("{{ CONTENIDO_EJERCICIOS }}", "\n".join(ejercicios_tex)).replace("{{ CLAVE_RESPUESTAS }}", "\n".join(respuestas_tex))
         with open(os.path.join(self.output_dir, filename), 'w', encoding='utf-8') as f: f.write(base)
         print(f"Examen generado en: {filename}")
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="Generador automático de exámenes de Física v0.0.6")
+    parser = argparse.ArgumentParser(description="Generador automático de exámenes de Física v0.1.1")
     parser.add_argument("--mru", type=int, default=0); parser.add_argument("--mrua", type=int, default=0)
     parser.add_argument("--vectores", type=int, default=0); parser.add_argument("--oblicuo", type=int, default=0)
     parser.add_argument("--newton", type=int, default=0); parser.add_argument("--hooke", type=int, default=0)
-    parser.add_argument("--plano", type=int, default=0)
+    parser.add_argument("--plano", type=int, default=0); parser.add_argument("--energia", type=int, default=0)
     parser.add_argument("--out", type=str, default="examen_generado.tex")
     args = parser.parse_args()
-    if all(v == 0 for v in [args.mru, args.mrua, args.vectores, args.oblicuo, args.newton, args.hooke, args.plano]):
-        args.mru, args.mrua, args.newton, args.hooke, args.plano = 1, 1, 1, 1, 1
-    GeneradorExamen().crear_examen(mru=args.mru, mrua=args.mrua, vectores=args.vectores, oblicuo=args.oblicuo, newton=args.newton, hooke=args.hooke, plano=args.plano, filename=args.out)
+    if all(v == 0 for v in [args.mru, args.mrua, args.vectores, args.oblicuo, args.newton, args.hooke, args.plano, args.energia]):
+        args.mru, args.mrua, args.newton, args.hooke, args.plano, args.energia = 1, 1, 1, 1, 1, 1
+    GeneradorExamen().crear_examen(mru=args.mru, mrua=args.mrua, vectores=args.vectores, oblicuo=args.oblicuo, newton=args.newton, hooke=args.hooke, plano=args.plano, energia=args.energia, filename=args.out)

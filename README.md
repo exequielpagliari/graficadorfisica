@@ -1,4 +1,4 @@
-# Asistente IA - Física Interactiva v0.1.0 🚀
+# Asistente IA - Física Interactiva v0.1.1 🚀
 
 Herramienta educativa integral para docentes de física. Genera guías de ejercicios personalizadas con cálculos precisos y gráficos dinámicos para el nivel secundario (6to año - PBA Argentina).
 
@@ -13,6 +13,7 @@ Herramienta educativa integral para docentes de física. Genera guías de ejerci
     - **Vectores**: Operaciones en 2D (Suma, Resta, Escalares).
     - **Dinámica**: Leyes de Newton, Rozamiento, Ley de Hooke.
     - **Sistemas**: Planos Inclinados con Diagramas de Cuerpo Libre (DCL).
+    - **Energía**: Energía Cinética, Potencial Gravitatoria, Potencial Elástica y Trabajo Mecánico.
 - **Gráficos Profesionales**: Generación automática de trayectorias, vectores y esquemas de fuerzas.
 - **Resultados de Referencia**: Incluye soluciones sugeridas para autoevaluación del alumno.
 
@@ -27,7 +28,7 @@ Herramienta educativa integral para docentes de física. Genera guías de ejerci
 ### Modo CLI (Terminal)
 Generar un examen personalizado:
 ```bash
-python generador_examen.py --mru 2 --newton 2 --plano 1 --out guia_final.tex
+python generador_examen.py --mru 2 --newton 2 --plano 1 --energia 2 --out guia_final.tex
 ```
 
 ## 📂 Estructura del Proyecto
