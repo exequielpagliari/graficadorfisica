@@ -10,7 +10,7 @@
 
 ## 🌐 Acceso Web (PyScript)
 ¡Usa la aplicación directamente desde tu navegador sin instalar nada!
-**[Link a la Web App](https://exequielpagliari.github.io/asistente_ia/)**
+**[Link a la Web App](https://exequielpagliari.github.io/graficadorfisica/)**
 
 ## 🚀 Características Principales
 - **Generación Multimodelo**: Crea exámenes únicos con datos aleatorios pero físicamente coherentes.
